@@ -1,0 +1,56 @@
+body {
+    font-family: Arial,Helvetica,sans-serif;
+    color: black; 
+    background-color: rgb(239, 239, 239); 
+}
+.ak { 
+    text-decoration: underline;
+}
+.btn {
+    width: 70px;
+}
+.nav {
+    visibility: hidden; /* visible | hidden */
+}
+#divQuestion {
+    position: absolute; 
+    left: 5px; 
+    top: 10px; 
+    z-index: 1000;
+}
+#divDimension {
+    font-size: x-large;
+    font-weight: bolder;
+    position: absolute; 
+    left: 204px; 
+    top: 49px; 
+    z-index: 1000;
+}
+#divLeft {
+    color: black;
+    font-size: large;
+    font-weight: bold;
+    position: absolute; 
+    left: 0px; 
+    top: 200px; 
+    z-index: 1000;
+}
+#divRight {
+    color: black;
+    font-size: large;
+    font-weight: bold;
+    position: absolute; 
+    left: 200px; 
+    top: 200px; 
+    z-index: 1000;
+}
+#divArrow {
+    color: blue;
+    visibility: hidden;
+    font-size: large;
+    font-weight: bold;
+}
+#txtEmail {
+    color: gray;
+    visibility: visible; /* visible | hidden */
+}
