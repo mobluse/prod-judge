@@ -126,7 +126,6 @@ function getFilenames() {
         vlines = [];
     }
     var callback = function (json) {
-        console.log(json);
         nms = json['filenames'];
         if (nms.length === 0 || nms[0].length === 0) {
             return;

@@ -203,7 +203,9 @@ HTTP.encodeFormData = function(data) {
  */
 HTTP._getResponse = function(request) {
     // Check the content type returned by the server
-    switch(request.getResponseHeader("Content-Type").slice(0, request.getResponseHeader("Content-Type").indexOf(";"))) { // M.O.B. added slice
+    var s = request.getResponseHeader("Content-Type");
+    var i;
+    switch(s.slice(0, (i = s.indexOf(";")) !== -1 ? i : s.length)) { // M.O.B. added slice
     case "text/xml":
         // If it is an XML document, use the parsed Document object
         return request.responseXML;
