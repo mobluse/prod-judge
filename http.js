@@ -3,15 +3,12 @@
  *
  * From the book JavaScript: The Definitive Guide, 5th Edition,
  * by David Flanagan. Copyright 2006 O'Reilly Media, Inc. (ISBN: 0596101996)
- * Changed to pass <http://www.javascriptlint.com/online_lint.php> by Mikael O. Bonnier.
- * According to the book it's OK to distribute this file.
  */
 
 // Make sure we haven't already been loaded
 var HTTP;
-if (HTTP && (typeof HTTP != "object" || HTTP.NAME)) {
+if (HTTP && (typeof HTTP != "object" || HTTP.NAME))
     throw new Error("Namespace 'HTTP' already exists");
-}
 
 // Create our namespace, and specify some meta-information
 HTTP = {};
@@ -36,14 +33,14 @@ HTTP._factory = null;
  * exception.  Once we find a working factory, remember it for later use.
  */
 HTTP.newRequest = function() {
-    if (HTTP._factory !== null) { return HTTP._factory(); }
+    if (HTTP._factory != null) return HTTP._factory();
 
     for(var i = 0; i < HTTP._factories.length; i++) {
         try {
             var factory = HTTP._factories[i];
             var request = factory();
-            if (request !== null) {
-                HTTP._factory = factory;
+            if (request != null) {
+                HTTP._factory = factory; 
                 return request;
             }
         }
@@ -56,10 +53,9 @@ HTTP.newRequest = function() {
     // so throw an exception now and for all future calls.
     HTTP._factory = function() {
         throw new Error("XMLHttpRequest not supported");
-    };
+    }
     HTTP._factory(); // Throw an error
-    return null;
-};
+}
 
 /**
  * Use XMLHttpRequest to fetch the contents of the specified URL using
@@ -71,10 +67,9 @@ HTTP.newRequest = function() {
 HTTP.getText = function(url, callback) {
     var request = HTTP.newRequest();
     request.onreadystatechange = function() {
-        if (request.readyState == 4 && request.status == 200) {
+        if (request.readyState == 4 && request.status == 200)
             callback(request.responseText);
-        }
-    };
+    }
     request.open("GET", url);
     request.send(null);
 };
@@ -89,10 +84,9 @@ HTTP.getText = function(url, callback) {
 HTTP.getXML = function(url, callback) {
     var request = HTTP.newRequest();
     request.onreadystatechange = function() {
-        if (request.readyState == 4 && request.status == 200) {
+        if (request.readyState == 4 && request.status == 200)
             callback(request.responseXML);
-        }
-    };
+    }
     request.open("GET", url);
     request.send(null);
 };
@@ -112,12 +106,12 @@ HTTP.getHeaders = function(url, callback, errorHandler) {
                 callback(HTTP.parseHeaders(request));
             }
             else {
-                if (errorHandler) { errorHandler(request.status,
-                                               request.statusText); }
-                else { callback(null); }
+                if (errorHandler) errorHandler(request.status,
+                                               request.statusText);
+                else callback(null);
             }
         }
-    };
+    }
     request.open("HEAD", url);
     request.send(null);
 };
@@ -137,7 +131,7 @@ HTTP.parseHeaders = function(request) {
     // Loop through the lines
     for(var i = 0; i < lines.length; i++) {
         var line = lines[i];
-        if (line.length === 0) { continue; }  // Skip empty lines
+        if (line.length == 0) continue;  // Skip empty lines
         // Split each line at first colon, and trim whitespace away
         var pos = line.indexOf(':');     
         var name = line.substring(0, pos).replace(ls, "").replace(ts, "");
@@ -161,15 +155,15 @@ HTTP.post = function(url, values, callback, errorHandler) {
     request.onreadystatechange = function() {
         if (request.readyState == 4) {
             if (request.status == 200) {
-                callback(HTTP._getResponse(request));
+                callback(HTTP._getResponse(request)); 
             }
             else {
-                if (errorHandler) { errorHandler(request.status,
-                                               request.statusText); }
-                else { callback(null); }
+                if (errorHandler) errorHandler(request.status,
+                                               request.statusText);
+                else callback(null);
             }
         }
-    };
+    }
 
     request.open("POST", url);
     // This header tells the server how to interpret the body of the request
@@ -209,7 +203,7 @@ HTTP.encodeFormData = function(data) {
  */
 HTTP._getResponse = function(request) {
     // Check the content type returned by the server
-    switch(request.getResponseHeader("Content-Type")) {
+    switch(request.getResponseHeader("Content-Type").slice(0, request.getResponseHeader("Content-Type").indexOf(";"))) { // M.O.B. added slice
     case "text/xml":
         // If it is an XML document, use the parsed Document object
         return request.responseXML;
@@ -261,40 +255,35 @@ HTTP.get = function(url, callback, options) {
     var request = HTTP.newRequest();
     var n = 0;
     var timer;
-    if (options.timeout) {
+    if (options.timeout)
         timer = setTimeout(function() {
                                request.abort();
-                               if (options.timeoutHandler) {
+                               if (options.timeoutHandler)
                                    options.timeoutHandler(url);
-                               }
                            },
                            options.timeout);
-    }
 
     request.onreadystatechange = function() {
         if (request.readyState == 4) {
-            if (timer) { clearTimeout(timer); }
+            if (timer) clearTimeout(timer);
             if (request.status == 200) {
                 callback(HTTP._getResponse(request));
             }
             else {
-                if (options.errorHandler) {
+                if (options.errorHandler)
                     options.errorHandler(request.status,
                                          request.statusText);
-                }
-                else { callback(null); }
+                else callback(null);
             }
         }
         else if (options.progressHandler) {
-            ++n;
-            options.progressHandler(n);
+            options.progressHandler(++n);
         }
-    };
+    }
 
     var target = url;
-    if (options.parameters) {
-        target += "?" + HTTP.encodeFormData(options.parameters);
-    }
+    if (options.parameters)
+        target += "?" + HTTP.encodeFormData(options.parameters)
     request.open("GET", target);
     request.send(null);
 };
@@ -305,8 +294,7 @@ HTTP.getTextWithScript = function(url, callback) {
     document.body.appendChild(script);
 
     // Get a unique function name
-    var funcname = "func" + HTTP.getTextWithScript.counter;
-    ++HTTP.getTextWithScript.counter;
+    var funcname = "func" + HTTP.getTextWithScript.counter++;
 
     // Define a function with that name, using this function as a
     // convenient namespace.  The script generated on the server
@@ -318,7 +306,7 @@ HTTP.getTextWithScript = function(url, callback) {
         // Clean up the script tag and the generated function
         document.body.removeChild(script);
         delete HTTP.getTextWithScript[funcname];
-    };
+    }
 
     // Encode the URL we want to fetch and the name of the function
     // as arguments to the jsquoter.php server-side script.  Set the src
@@ -326,7 +314,7 @@ HTTP.getTextWithScript = function(url, callback) {
     script.src = "jsquoter.php" +
                  "?url=" + encodeURIComponent(url) + "&func=" +
                  encodeURIComponent("HTTP.getTextWithScript." + funcname);
-};
+}
 
 // We use this to generate unique function callback names in case there
 // is more than one request pending at a time.
